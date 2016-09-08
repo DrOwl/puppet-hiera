@@ -49,11 +49,18 @@ class hiera (
   $owner                   = $::hiera::params::owner,
   $group                   = $::hiera::params::group,
   $provider                = $::hiera::params::provider,
+  $yaml                    = true,
+  $yaml_datadir            = undef,
+  $yaml_datadir_manage     = false,
+  $json                    = false,
+  $json_datadir            = undef,
+  $json_datadir_manage     = false,
   $eyaml                   = false,
   $eyaml_name              = 'hiera-eyaml',
   $eyaml_version           = undef,
   $eyaml_source            = undef,
   $eyaml_datadir           = undef,
+  $eyaml_datadir_manage    = false,
   $eyaml_extension         = undef,
   $confdir                 = $::hiera::params::confdir,
   $puppet_conf_manage      = true,
@@ -134,10 +141,45 @@ class hiera (
     }
   }
 
+  if ( $yaml ) {
+    $yaml_real_datadir = empty($yaml_datadir) ? {
+      false => $yaml_datadir,
+      true  => $datadir,
+    }
+  }
+  if ( $yaml_datadir ) {
+    if ($yaml_datadir !~ /%\{.*\}/) and ($yaml_datadir_manage == true) {
+      file { $yaml_datadir:
+        ensure => directory,
+      }
+    }
+  }
+
+  if ( $json ) {
+    $json_real_datadir = empty($json_datadir) ? {
+      false => $json_datadir,
+      true  => $datadir,
+    }
+  }
+  if ( $json_datadir ) {
+    if ($json_datadir !~ /%\{.*\}/) and ($json_datadir_manage == true) {
+      file { $json_datadir:
+        ensure => directory,
+      }
+    }
+  }
+
   if ( $eyaml_gpg ) or ( $eyaml ) {
     $eyaml_real_datadir = empty($eyaml_datadir) ? {
       false => $eyaml_datadir,
       true  => $datadir,
+    }
+  }
+  if ( $eyaml_datadir ) {
+    if ($eyaml_datadir !~ /%\{.*\}/) and ($eyaml_datadir_manage == true) {
+      file { $eyaml_datadir:
+        ensure => directory,
+      }
     }
   }
 

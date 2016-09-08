@@ -4,7 +4,11 @@
 <% if @eyaml
   @backends.unshift('eyaml')
   @backends = @backends.uniq
-end -%>
+end 
+if @json
+  @backends.unshift('json')
+  @backends = @backends.uniq
+ end-%>
 <%= @backends.map{|x| "  - #{x}"}.join("\n") %>
 
 :logger: <%= @logger %>
@@ -12,10 +16,17 @@ end -%>
 :hierarchy:
 <%= @hierarchy.map{|x| x  =~ /%/ ? "  - \"#{x}\"" : "  - #{x}"}.join("\n") %>
 
+<% if @yaml -%>
 :yaml:
-  :datadir: <%= @datadir %>
-<% if @eyaml -%>
+  :datadir: <%= @yaml_real_datadir %>
+<% end -%>
 
+<% if @json -%>
+:json:
+  :datadir: <%= @json_real_datadir %>
+<% end -%>
+
+<% if @eyaml -%>
 :eyaml:
   :datadir: <%= @eyaml_real_datadir %>
 <% if @eyaml_extension -%>
@@ -31,16 +42,18 @@ end -%>
   :gpg_recipients: "<%= @eyaml_gpg_recipients %>"
 <% end -%>
 <% end -%>
-<% if @merge_behavior -%>
 
+<% if @merge_behavior -%>
 :merge_behavior: <%= @merge_behavior %>
 <% end -%>
+
 <% if @merge_behavior == 'deep' && !@deep_merge_options.empty? -%>
 :deep_merge_options:
   <%- @deep_merge_options.each do |option_key, option_value| -%>
   :<%= option_key %>: <%= option_value %>
   <%- end -%>
 <%- end -%>
+
 <% if @extra_config && !@extra_config.empty? -%>
 
 <%= @extra_config %>
