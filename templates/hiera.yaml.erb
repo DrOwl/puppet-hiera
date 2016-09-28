@@ -2,12 +2,10 @@
 ---
 :backends:
 <% if @eyaml
-  @backends.unshift('eyaml')
-  @backends = @backends.uniq
-end 
-if @json
-  @backends.unshift('json')
-  @backends = @backends.uniq
+  @backends.unshift('eyaml') unless @backends.include?("eyaml")
+ end
+ if @json
+  @backends.unshift('json') unless @backends.include?("json")
  end-%>
 <%= @backends.map{|x| "  - #{x}"}.join("\n") %>
 
